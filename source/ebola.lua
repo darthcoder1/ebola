@@ -17,12 +17,10 @@ workspace "ebola"
 		defines { "DEBUG" }
 		targetsuffix "_d"
 		symbols "On"
-		flags { "/MDd" }
 
 	filter "configurations:Release"
 		defines { "NDEBUG" }
 		optimize "On"
-		flags { "/MD" }
 	
 -- ------------------------------------
 -- Project 'core'
@@ -58,10 +56,33 @@ end
 -- ------------------------------------
 -- External
 -- ------------------------------------
---function use_glfw()
---	includedirs { "" }
---end
+function use_vulkan()
+	includedirs(ExternalFolder .. "VulkanSDK/1.0.57.0/Include")
+	links(ExternalFolder .. "VulkanSDK/1.0.57.0/Lib/vulkan-1.lib")
+end
 
+function use_glfw()
+	includedirs({ ExternalFolder .. "glfw-3.2.1/include" })
+	links(ExternalFolder .. "glfw-3.2.1/lib-vc2015/glfw3.lib")
+end
+
+function use_glm()
+	includedirs({ ExternalFolder .. "glm" })
+end
+
+-- ------------------------------------
+-- Project 'editor_app'
+-- ------------------------------------
+project "editor_app"
+	kind "ConsoleApp"
+	files { "editor_app/**.h", "editor_app/**.cpp" }
+	
+	use_core()
+	use_gfx()
+	use_vulkan();
+	use_glfw();
+	use_glm();
+	
 -- ------------------------------------
 -- Project 'editor_app'
 -- ------------------------------------
@@ -92,14 +113,3 @@ project "test_runner"
 		
 	use_core();
 	use_gfx();
-
-
--- ------------------------------------
--- Project 'editor_app'
--- ------------------------------------
-project "editor_app"
-	kind "WindowedApp"
-	files { "editor_app/**.h", "editor_app/**.cpp" }
-	
-	use_core()
-	use_gfx()
